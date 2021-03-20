@@ -1,3 +1,5 @@
+package servlets;
+
 import freemarker.template.Configuration;
 
 import javax.servlet.http.HttpServlet;
