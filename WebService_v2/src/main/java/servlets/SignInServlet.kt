@@ -1,37 +1,30 @@
-package servlets;
+package servlets
 
-import account.AccountService;
+import account.AccountService
+import java.io.IOException
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+class SignInServlet(private val accountService: AccountService) : HttpServlet() {
+    @Throws(IOException::class)
+    override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
+        val login = req.getParameter("login")
+        val pass = req.getParameter("password")
 
-public class SignInServlet extends HttpServlet {
-    private final AccountService accountService;
-
-    public SignInServlet(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var login = req.getParameter("login");
-        var pass = req.getParameter("password");
-
-        resp.setContentType("application/json;charset=utf-8");
+        resp.contentType = "application/json;charset=utf-8"
         if (login == null || pass == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            resp.status = HttpServletResponse.SC_BAD_REQUEST
+            return
         }
 
-        var user = accountService.getUserByLogin(login);
-        if (user == null || !user.getPass().equals(pass)) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().println("Unauthorized");
-            return;
+        val user = accountService.getUserByLogin(login)
+        if (user?.pass != pass) {
+            resp.status = HttpServletResponse.SC_UNAUTHORIZED
+            resp.writer.println("Unauthorized")
+            return
         }
 
-        resp.getWriter().println("Authorized: " + login);
+        resp.writer.println("Authorized: $login")
     }
 }

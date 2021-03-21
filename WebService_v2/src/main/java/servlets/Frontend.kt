@@ -1,17 +1,18 @@
-package servlets;
+package servlets
 
-import freemarker.template.Configuration;
+import freemarker.template.Configuration
+import java.io.File
+import javax.servlet.http.HttpServlet
+import kotlin.Throws
+import java.io.IOException
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-
-public class Frontend extends HttpServlet {
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        var config = new Configuration(Configuration.getVersion());
-        config.setDirectoryForTemplateLoading(new File("templates"));
-        response.getWriter().println(config.getTemplate("page.html"));
+class Frontend : HttpServlet() {
+    @Throws(IOException::class)
+    public override fun doGet(request: HttpServletRequest, response: HttpServletResponse) {
+        val config = Configuration(Configuration.getVersion())
+        config.setDirectoryForTemplateLoading(File("templates"))
+        response.writer.println(config.getTemplate("page.html"))
     }
 }

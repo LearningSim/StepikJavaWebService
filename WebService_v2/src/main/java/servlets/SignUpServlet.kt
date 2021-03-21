@@ -1,36 +1,28 @@
-package servlets;
+package servlets
 
-import account.AccountService;
-import account.UserProfile;
-import com.google.gson.Gson;
+import account.AccountService
+import account.UserProfile
+import com.google.gson.Gson
+import java.io.IOException
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+class SignUpServlet(private val accountService: AccountService) : HttpServlet() {
+    @Throws(IOException::class)
+    override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
+        val login = req.getParameter("login")
+        val pass = req.getParameter("password")
 
-public class SignUpServlet extends HttpServlet {
-    private final AccountService accountService;
-
-    public SignUpServlet(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var login = req.getParameter("login");
-        var pass = req.getParameter("password");
-
-        resp.setContentType("application/json;charset=utf-8");
+        resp.contentType = "application/json;charset=utf-8"
         if (login == null || pass == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            resp.status = HttpServletResponse.SC_BAD_REQUEST
+            return
         }
 
-        var user = new UserProfile(login, pass, login);
-        accountService.addUser(user);
-
-        var json = new Gson().toJson(user);
-        resp.getWriter().println(json);
+        val user = UserProfile(login, pass, login)
+        accountService.addUser(user)
+        val json = Gson().toJson(user)
+        resp.writer.println(json)
     }
 }

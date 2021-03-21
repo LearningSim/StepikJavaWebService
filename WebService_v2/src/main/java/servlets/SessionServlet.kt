@@ -1,67 +1,60 @@
-package servlets;
+package servlets
 
-import account.AccountService;
-import com.google.gson.Gson;
+import account.AccountService
+import com.google.gson.Gson
+import java.io.IOException
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+class SessionServlet(private val accountService: AccountService) : HttpServlet() {
+    @Throws(IOException::class)
+    override fun doGet(req: HttpServletRequest, resp: HttpServletResponse) {
+        val sessionId = req.session.id
+        val user = accountService.getUserBySessionId(sessionId)
 
-public class SessionServlet extends HttpServlet {
-    private final AccountService accountService;
-
-    public SessionServlet(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var sessionId = req.getSession().getId();
-        var user = accountService.getUserBySessionId(sessionId);
-
-        resp.setContentType("application/json;charset=utf-8");
+        resp.contentType = "application/json;charset=utf-8"
         if (user == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.status = HttpServletResponse.SC_UNAUTHORIZED
         } else {
-            var json = new Gson().toJson(user);
-            resp.getWriter().println(json);
+            val json = Gson().toJson(user)
+            resp.writer.println(json)
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var login = req.getParameter("login");
-        var pass = req.getParameter("pass");
+    @Throws(IOException::class)
+    override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
+        val login = req.getParameter("login")
+        val pass = req.getParameter("pass")
 
-        resp.setContentType("application/json;charset=utf-8");
+        resp.contentType = "application/json;charset=utf-8"
         if (login == null || pass == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            resp.status = HttpServletResponse.SC_BAD_REQUEST
+            return
         }
 
-        var user = accountService.getUserByLogin(login);
-        if (user == null || !user.getPass().equals(pass)) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        val user = accountService.getUserByLogin(login)
+        if (user?.pass != pass) {
+            resp.status = HttpServletResponse.SC_UNAUTHORIZED
+            return
         }
 
-        accountService.addSession(req.getSession().getId(), user);
-        var json = new Gson().toJson(user);
-        resp.getWriter().println(json);
+        accountService.addSession(req.session.id, user)
+        val json = Gson().toJson(user)
+        resp.writer.println(json)
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var sessionId = req.getSession().getId();
-        var user = accountService.getUserBySessionId(sessionId);
+    @Throws(IOException::class)
+    override fun doDelete(req: HttpServletRequest, resp: HttpServletResponse) {
+        val sessionId = req.session.id
+        val user = accountService.getUserBySessionId(sessionId)
 
-        resp.setContentType("application/json;charset=utf-8");
+        resp.contentType = "application/json;charset=utf-8"
         if (user == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.status = HttpServletResponse.SC_UNAUTHORIZED
         } else {
-            accountService.deleteSession(sessionId);
-            resp.getWriter().println("Goodbye!");
+            accountService.deleteSession(sessionId)
+            resp.writer.println("Goodbye!")
         }
     }
 }
