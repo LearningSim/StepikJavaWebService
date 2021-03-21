@@ -37,11 +37,13 @@ public class SessionServlet extends HttpServlet {
         resp.setContentType("application/json;charset=utf-8");
         if (login == null || pass == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
 
         var user = accountService.getUserByLogin(login);
         if (user == null || !user.getPass().equals(pass)) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         accountService.addSession(req.getSession().getId(), user);
