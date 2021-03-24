@@ -2,6 +2,7 @@ package servlets
 
 import account.AccountService
 import com.google.gson.Gson
+import org.eclipse.jetty.http.MimeTypes
 import java.io.IOException
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -13,7 +14,7 @@ class SessionServlet(private val accountService: AccountService) : HttpServlet()
         val sessionId = req.session.id
         val user = accountService.getUserBySessionId(sessionId)
 
-        resp.contentType = "application/json;charset=utf-8"
+        resp.contentType = MimeTypes.Type.APPLICATION_JSON_UTF_8.toString()
         if (user == null) {
             resp.status = HttpServletResponse.SC_UNAUTHORIZED
         } else {
@@ -27,7 +28,7 @@ class SessionServlet(private val accountService: AccountService) : HttpServlet()
         val login = req.getParameter("login")
         val pass = req.getParameter("pass")
 
-        resp.contentType = "application/json;charset=utf-8"
+        resp.contentType = MimeTypes.Type.APPLICATION_JSON_UTF_8.toString()
         if (login == null || pass == null) {
             resp.status = HttpServletResponse.SC_BAD_REQUEST
             return
@@ -49,7 +50,7 @@ class SessionServlet(private val accountService: AccountService) : HttpServlet()
         val sessionId = req.session.id
         val user = accountService.getUserBySessionId(sessionId)
 
-        resp.contentType = "application/json;charset=utf-8"
+        resp.contentType = MimeTypes.Type.APPLICATION_JSON_UTF_8.toString()
         if (user == null) {
             resp.status = HttpServletResponse.SC_UNAUTHORIZED
         } else {

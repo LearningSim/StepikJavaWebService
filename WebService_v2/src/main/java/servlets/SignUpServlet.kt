@@ -3,6 +3,7 @@ package servlets
 import account.AccountService
 import account.UserProfile
 import com.google.gson.Gson
+import org.eclipse.jetty.http.MimeTypes
 import java.io.IOException
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -14,7 +15,7 @@ class SignUpServlet(private val accountService: AccountService) : HttpServlet() 
         val login = req.getParameter("login")
         val pass = req.getParameter("password")
 
-        resp.contentType = "application/json;charset=utf-8"
+        resp.contentType = MimeTypes.Type.APPLICATION_JSON_UTF_8.toString()
         if (login == null || pass == null) {
             resp.status = HttpServletResponse.SC_BAD_REQUEST
             return

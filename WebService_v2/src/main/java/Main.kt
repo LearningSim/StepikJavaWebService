@@ -1,5 +1,6 @@
 import account.AccountService
 import account.UserProfile
+import dao.UserDao
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.servlet.ServletContextHandler
@@ -30,8 +31,15 @@ object Main {
         accountService.addUser(UserProfile("test"))
 
         servletHandler.addServlet(ServletHolder(SessionServlet(accountService)), "/api/v1/sessions")
-        servletHandler.addServlet(ServletHolder(SignUpServlet(accountService)), "/signup")
-        servletHandler.addServlet(ServletHolder(SignInServlet(accountService)), "/signin")
+        servletHandler.addServlet(ServletHolder(SignUpServlet(accountService)), "/signup_o")
+        servletHandler.addServlet(ServletHolder(SignInServlet(accountService)), "/signin_o")
+
+        val dbService = DBService()
+        dbService.printConnectInfo()
+        val userDao = UserDao(dbService)
+
+        servletHandler.addServlet(ServletHolder(PersistentSignUpServlet(userDao)), "/signup")
+        servletHandler.addServlet(ServletHolder(PersistentSignInServlet(userDao)), "/signin")
         return servletHandler
     }
 

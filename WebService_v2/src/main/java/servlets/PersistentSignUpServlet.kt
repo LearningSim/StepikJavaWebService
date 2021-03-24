@@ -1,13 +1,14 @@
 package servlets
 
-import account.AccountService
+import com.google.gson.Gson
+import dao.UserDao
 import org.eclipse.jetty.http.MimeTypes
 import java.io.IOException
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class SignInServlet(private val accountService: AccountService) : HttpServlet() {
+class PersistentSignUpServlet(private val userDao: UserDao) : HttpServlet() {
     @Throws(IOException::class)
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
         val login = req.getParameter("login")
@@ -19,13 +20,8 @@ class SignInServlet(private val accountService: AccountService) : HttpServlet() 
             return
         }
 
-        val user = accountService.getUserByLogin(login)
-        if (user?.pass != pass) {
-            resp.status = HttpServletResponse.SC_UNAUTHORIZED
-            resp.writer.println("Unauthorized")
-            return
-        }
-
-        resp.writer.println("Authorized: $login")
+        val id = userDao.addUser(login, pass)
+        val json = Gson().toJson(userDao.getUser(id))
+        resp.writer.println(json)
     }
 }
