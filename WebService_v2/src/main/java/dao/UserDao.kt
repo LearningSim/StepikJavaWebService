@@ -1,9 +1,9 @@
 package dao
 
-import DBService
+import IDBService
 import entity.UserEntity
 
-class UserDao(private val dbService: DBService) {
+class UserDao(private val dbService: IDBService) {
     fun getUser(id: Long): UserEntity? {
         return dbService.useSession { it.get(UserEntity::class.java, id) }
     }

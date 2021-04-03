@@ -3,7 +3,7 @@ import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
 
-class DBService {
+class DBService : IDBService {
     private val sessionFactory: SessionFactory
     private val h2Config: Configuration
         get() {
@@ -23,7 +23,7 @@ class DBService {
         sessionFactory = h2Config.buildSessionFactory()
     }
 
-    fun <T> useSessionInTransaction(action: (Session) -> T): T {
+    override fun <T> useSessionInTransaction(action: (Session) -> T): T {
         sessionFactory.openSession().use { session ->
             val transaction = session.beginTransaction()
             val result = action(session)
@@ -32,11 +32,11 @@ class DBService {
         }
     }
 
-    fun <T> useSession(action: (Session) -> T): T {
+    override fun <T> useSession(action: (Session) -> T): T {
         sessionFactory.openSession().use { return action(it) }
     }
 
-    fun printConnectInfo() {
+    override fun printConnectInfo() {
         sessionFactory.openSession().use { session ->
             session.doWork { con ->
                 println("------ connect info ------")
