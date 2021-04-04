@@ -40,6 +40,9 @@ object Main {
 
         servletHandler.addServlet(ServletHolder(PersistentSignUpServlet(userDao)), "/signup")
         servletHandler.addServlet(ServletHolder(PersistentSignInServlet(userDao)), "/signin")
+
+        servletHandler.addServlet(EchoSocketServlet::class.java, "/chat")
+
         return servletHandler
     }
 
